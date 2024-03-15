@@ -3,6 +3,7 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class TicTacToe {
@@ -17,11 +18,14 @@ public class TicTacToe {
     JButton btn8 = new JButton();
     JButton btn9 = new JButton();
 
+    JPanel panel = new JPanel();
+
     JLabel label = new JLabel();
+    JPanel popupPanel;
+    JLabel popupLabel = new JLabel();
 
     ArrayList<Integer> selected = new ArrayList<>();
     ArrayList<Integer> available = new ArrayList<>();
-    int[][] winPattern = {{}};
 
     TicTacToe() {
         for (int i = 0; i < 9; i++) {
@@ -36,6 +40,11 @@ public class TicTacToe {
 
     void initComponent() {
         JFrame frame = createFrame();
+        panel.setOpaque(false);
+        panel.setBounds(0,0, 355, 400);
+
+        popupPanel = createPopupPanel();
+        popupPanel.setBounds(70, 120, 200, 100);
 
         btn.setBounds(10,10,100,100);
         btn2.setBounds(120,10,100,100);
@@ -57,25 +66,22 @@ public class TicTacToe {
         btn7.addActionListener(e -> onAction(7));
         btn8.addActionListener(e -> onAction(8));
         btn9.addActionListener(e -> onAction(9));
+//
+        panel.add(btn);
+        panel.add(btn2);
+        panel.add(btn3);
+        panel.add(btn4);
+        panel.add(btn5);
+        panel.add(btn6);
+        panel.add(btn7);
+        panel.add(btn8);
+        panel.add(btn9);
+        panel.add(label);
 
-        frame.add(btn);
-        frame.add(btn2);
-        frame.add(btn3);
-        frame.add(btn4);
-        frame.add(btn5);
-        frame.add(btn6);
-        frame.add(btn7);
-        frame.add(btn8);
-        frame.add(btn9);
-        frame.add(label);
+        panel.setVisible(true);
 
-        JButton showPopup = new JButton("Show Popup");
-        showPopup.setBounds(12, 12, 100, 20);
-
-        JPanel popupPanel = createPopupPanel();
-        popupPanel.setBounds(120, 120, 100, 100);
-
-        showPopup.addActionListener(e -> popupPanel.setVisible(true));
+        frame.add(panel);
+        frame.add(popupPanel);
 
     }
 
@@ -86,10 +92,9 @@ public class TicTacToe {
         popupPanel.setBorder(new LineBorder(Color.gray));
         popupPanel.setVisible(false);
 
-        JLabel popupLabel = new JLabel("Hello Bozo");
         popupPanel.add(wrapInPanel(popupLabel));
 
-        JButton popupCloseButton = new JButton("Close");
+        JButton popupCloseButton = new JButton("Restart");
         popupPanel.add(wrapInPanel(popupCloseButton), BorderLayout.SOUTH);
 
         popupCloseButton.addActionListener(e -> popupPanel.setVisible(false));
@@ -137,6 +142,9 @@ public class TicTacToe {
             selected.add(num);
             changeBtnBg(num, Color.red);
             available.removeIf(integer -> integer.equals(num));
+            panel.setVisible(false);
+            popupPanel.setVisible(true);
+//            boolean isWin = isWin(selected);
 //            if (available.size() > 0) {
 //                int rand = available.get(random.nextInt(available.size()));
 //                selected.add(rand);
@@ -144,6 +152,29 @@ public class TicTacToe {
 //                changeBtnBg(rand, Color.blue);
 //            }
         }
+    }
+
+    boolean isWin(ArrayList<Integer> arrSelected) {
+        int[][] winPattern = {
+            {1,2,3},{4,5,6},{7,8,9},
+            {1,4,7},{1,5,9},{7,5,3},
+            {2,5,8},{3,6,9}
+        };
+        for(int[] win1: winPattern) {
+            ArrayList<Integer> includes = new ArrayList<>();
+            for (int win2: win1) {
+                boolean isContain = arrSelected.contains(win2);
+                if (isContain) {
+                    includes.add(1);
+                } else {
+                    includes.add(0);
+                }
+            }
+            if (!includes.contains(0)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
