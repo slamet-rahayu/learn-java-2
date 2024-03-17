@@ -125,12 +125,7 @@ class primbon_calculator extends JFrame {
 
         sep.setBounds(0, 260, jfWidth, 10);
 
-        jButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                jButtonActionPerformed(e);
-            }
-        });
+        jButton.addActionListener(this::jButtonActionPerformed);
 
         jLabel7.setVisible(false);
         jLabel8.setVisible(false);

@@ -1,9 +1,7 @@
 package games;
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 public class TicTacToe {
@@ -17,14 +15,17 @@ public class TicTacToe {
     JButton btn7 = new JButton();
     JButton btn8 = new JButton();
     JButton btn9 = new JButton();
+    JButton btnRestart = new JButton();
 
-    JPanel panel = new JPanel();
+    JPanel panel;
+    JFrame frame;
+    String winner = "";
 
     JLabel label = new JLabel();
-    JPanel popupPanel;
-    JLabel popupLabel = new JLabel();
+    JLabel winnerLabel = new JLabel("Winner: ");
 
-    ArrayList<Integer> selected = new ArrayList<>();
+    ArrayList<Integer> selectedRed = new ArrayList<>();
+    ArrayList<Integer> selectedBlue = new ArrayList<>();
     ArrayList<Integer> available = new ArrayList<>();
 
     TicTacToe() {
@@ -39,12 +40,12 @@ public class TicTacToe {
     }
 
     void initComponent() {
-        JFrame frame = createFrame();
+        frame = createFrame();
+        panel = new JPanel();
         panel.setOpaque(false);
         panel.setBounds(0,0, 355, 400);
 
-        popupPanel = createPopupPanel();
-        popupPanel.setBounds(70, 120, 200, 100);
+        btnRestart.setText("Restart");
 
         btn.setBounds(10,10,100,100);
         btn2.setBounds(120,10,100,100);
@@ -56,6 +57,9 @@ public class TicTacToe {
         btn8.setBounds(120,230,100,100);
         btn9.setBounds(230,230,100,100);
         label.setBounds(120, 120, 200, 40);
+        btnRestart.setBounds(230, 340, 100, 30);
+        winnerLabel.setBounds(10, 340, 200, 40);
+        winnerLabel.setFont(new Font("Arial", Font.PLAIN, 16));
 
         btn.addActionListener(e -> onAction(1));
         btn2.addActionListener(e -> onAction(2));
@@ -66,6 +70,7 @@ public class TicTacToe {
         btn7.addActionListener(e -> onAction(7));
         btn8.addActionListener(e -> onAction(8));
         btn9.addActionListener(e -> onAction(9));
+        btnRestart.addActionListener(e -> restart());
 //
         panel.add(btn);
         panel.add(btn2);
@@ -77,42 +82,16 @@ public class TicTacToe {
         panel.add(btn8);
         panel.add(btn9);
         panel.add(label);
-
+        frame.add(btnRestart);
+        frame.add(winnerLabel);
         panel.setVisible(true);
-
         frame.add(panel);
-        frame.add(popupPanel);
 
-    }
-
-    JPanel createPopupPanel() {
-        JPanel popupPanel = new JPanel(new BorderLayout());
-        popupPanel.setOpaque(false);
-        popupPanel.setMaximumSize(new Dimension(150, 70));
-        popupPanel.setBorder(new LineBorder(Color.gray));
-        popupPanel.setVisible(false);
-
-        popupPanel.add(wrapInPanel(popupLabel));
-
-        JButton popupCloseButton = new JButton("Restart");
-        popupPanel.add(wrapInPanel(popupCloseButton), BorderLayout.SOUTH);
-
-        popupCloseButton.addActionListener(e -> popupPanel.setVisible(false));
-
-        return popupPanel;
-
-    }
-
-    JPanel wrapInPanel(JComponent component) {
-        JPanel panel = new JPanel();
-        panel.setBackground(new Color(50, 210, 250, 150));
-        panel.add(component);
-        return panel;
     }
 
     JFrame createFrame() {
         JFrame frame = new JFrame();
-        frame.setSize(355, 400);
+        frame.setSize(355, 430);
         frame.setLayout(null);
         frame.setLocationRelativeTo(null);
         frame.setTitle("Ticc Tacc Toes");
@@ -138,19 +117,32 @@ public class TicTacToe {
 
     void onAction(Integer num) {
         Random random = new Random();
-        if (!selected.contains(num)) {
-            selected.add(num);
+        if (!selectedRed.contains(num) && !selectedBlue.contains(num) && winner.equals("")) {
+            selectedRed.add(num);
             changeBtnBg(num, Color.red);
             available.removeIf(integer -> integer.equals(num));
-            panel.setVisible(false);
-            popupPanel.setVisible(true);
-//            boolean isWin = isWin(selected);
-//            if (available.size() > 0) {
-//                int rand = available.get(random.nextInt(available.size()));
-//                selected.add(rand);
-//                available.removeIf(integer -> integer.equals(rand));
-//                changeBtnBg(rand, Color.blue);
-//            }
+            boolean isWinnerRed = isWin(selectedRed);
+            if (isWinnerRed) {
+                winner = "Red";
+                winnerLabel.setText("Winner: "+winner);
+            } else {
+                if (available.size() > 0) {
+                    int rand = available.get(random.nextInt(available.size()));
+                    while (selectedBlue.contains(rand)) {
+                        rand = available.get(random.nextInt(available.size()));
+                    }
+                    selectedBlue.add(rand);
+                    if (available.contains(rand)) {
+                        available.remove((Integer) rand);
+                    }
+                    changeBtnBg(rand, Color.blue);
+                    boolean isWinnerBlue = isWin(selectedBlue);
+                    if (isWinnerBlue) {
+                        winner = "Blue";
+                        winnerLabel.setText("Winner: "+winner);
+                    }
+                }
+            }
         }
     }
 
@@ -175,6 +167,10 @@ public class TicTacToe {
             }
         }
         return false;
+    }
+
+    void restart() {
+        frame.getContentPane().repaint();
     }
 
 }
