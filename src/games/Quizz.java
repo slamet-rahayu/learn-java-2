@@ -1,13 +1,26 @@
 package games;
 
+import netscape.javascript.JSObject;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.concurrent.CompletableFuture;
 
 public class Quizz {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException {
         Quizz quizz = new Quizz();
-        quizz.initComponent();
+//        quizz.initComponent();
+        quizz.testHttp();
     }
 
     private void initComponent() {
@@ -140,5 +153,24 @@ public class Quizz {
 
 
         return mainPanel;
+    }
+
+
+    private void testHttp() {
+        try {
+            JSONParser parser = new JSONParser();
+            HttpClient client = HttpClient.newHttpClient();
+            URI uri = URI.create("https://jsonplaceholder.typicode.com/todos/1");
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(uri)
+                    .GET()
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            Object obj = parser.parse(response.body());
+            JSONObject jsObject = (JSONObject) obj;
+            System.out.println(jsObject);
+        } catch (ParseException | InterruptedException | IOException IE) {
+            System.out.println(IE.getMessage());
+        }
     }
 }
