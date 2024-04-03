@@ -1,12 +1,32 @@
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.JOptionPane;
 
 public class Main {
+    static Timer timer;
+    static int interval = 299;
     public static void main(String[] args) {
 //        total_pembelian();
 //        simple_gui_input();
 //        try_an_array();
+        timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                System.out.println(setInterval());
+            }
+        };
+
+        timer.scheduleAtFixedRate(task, 0, 1000);
+    }
+
+    public static int setInterval() {
+        if (interval <= 1) {
+            timer.cancel();
+        }
+        return --interval;
     }
 
     public static void total_pembelian() {
