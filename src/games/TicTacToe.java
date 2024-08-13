@@ -2,6 +2,7 @@ package games;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class TicTacToe {
@@ -26,12 +27,9 @@ public class TicTacToe {
 
     ArrayList<Integer> selectedRed = new ArrayList<>();
     ArrayList<Integer> selectedBlue = new ArrayList<>();
-    ArrayList<Integer> available = new ArrayList<>();
+    ArrayList<Integer> available = new ArrayList<>(List.of(1,2,3,4,5,6,7,8,9));
 
     TicTacToe() {
-        for (int i = 0; i < 9; i++) {
-            available.add(i+1);
-        }
     }
 
     public static void main(String[] args) {
