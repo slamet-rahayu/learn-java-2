@@ -117,7 +117,7 @@ public class TicTacToe {
 
     void onAction(Integer num) {
         Random random = new Random();
-        if (!selectedRed.contains(num) && !selectedBlue.contains(num) && winner.equals("")) {
+        if (!selectedRed.contains(num) && !selectedBlue.contains(num) && winner.isEmpty()) {
             selectedRed.add(num);
             changeBtnBg(num, Color.red);
             available.removeIf(integer -> integer.equals(num));
@@ -126,7 +126,7 @@ public class TicTacToe {
                 winner = "Red";
                 winnerLabel.setText("Winner: "+winner);
             } else {
-                if (available.size() > 0) {
+                if (!available.isEmpty()) {
                     int rand = available.get(random.nextInt(available.size()));
                     while (selectedBlue.contains(rand)) {
                         rand = available.get(random.nextInt(available.size()));
